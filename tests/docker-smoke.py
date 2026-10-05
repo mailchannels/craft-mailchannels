@@ -10,7 +10,10 @@ import time
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
-IMAGE = 'visibility-craft-tests:php83'
+PHP_VERSION = os.environ.get('CRAFT_TEST_PHP', '8.3')
+if PHP_VERSION not in ('8.2', '8.3'):
+    raise ValueError('CRAFT_TEST_PHP must be 8.2 or 8.3')
+IMAGE = 'visibility-craft-tests:php' + PHP_VERSION.replace('.', '')
 SUFFIX = uuid.uuid4().hex[:10]
 NETWORK = 'visibility-craft-' + SUFFIX
 DB = NETWORK + '-db'
@@ -47,7 +50,8 @@ with tempfile.TemporaryDirectory(prefix='visibility-craft-') as directory:
     network_created = False
     db_created = False
     try:
-        run('docker', 'build', '-t', IMAGE, '-f', str(ROOT / 'tests/Dockerfile'), str(ROOT))
+        run('docker', 'build', '--build-arg', 'PHP_VERSION=' + PHP_VERSION,
+            '-t', IMAGE, '-f', str(ROOT / 'tests/Dockerfile'), str(ROOT))
         run('docker', 'run', '--rm', *mounts, IMAGE,
             'composer', 'install', '--no-interaction', '--prefer-dist', '--no-progress')
         run('docker', 'network', 'create', '--internal', NETWORK)
@@ -86,7 +90,7 @@ with tempfile.TemporaryDirectory(prefix='visibility-craft-') as directory:
                     if b'fixture-secret-not-real' in file.read_bytes():
                         raise RuntimeError('Fixture secret leaked into ' + str(file.relative_to(app)))
         print(json.dumps({'files_checked_for_secret_leaks': checked, 'secret_matches': 0,
-                          'craft': '5.11.4', 'live_email_sent': False}))
+                          'craft': '5.11.4', 'php_series': PHP_VERSION, 'live_email_sent': False}))
     finally:
         if db_created:
             subprocess.run(['docker', 'rm', '-f', DB], capture_output=True)

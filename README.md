@@ -1,7 +1,7 @@
 # MailChannels for Craft CMS
 
 **Unreleased integration candidate.** Tested locally with Craft 5.11.4 and PHP
-8.3. It is not listed in the Craft Plugin Store and has not sent a live test email.
+8.2 and 8.3. It is not listed in the Craft Plugin Store and has not sent a live test email.
 
 Adds **MailChannels** to Settings → Email → Transport Type. Craft system emails
 and plugins that use Craft's mailer are sent through the MailChannels Email API.
@@ -69,13 +69,18 @@ plugins can log message data independently; review their logging configuration.
 
 The checked-in Composer locks capture Craft **5.11.4**, MailChannels SDK **2.2.0**,
 Symfony Mailer **7.4.19**, Guzzle **7.15.5** and PHPUnit **10.5.66**.
+Composer resolves dependencies for PHP 8.2, including ZIPStream 3.1.2; this avoids
+locking a transitive dependency that requires PHP 8.3.
 
 ```sh
 docker build -t visibility-craft-tests:php83 -f tests/Dockerfile .
 docker run --rm -v "$PWD:/app" visibility-craft-tests:php83 composer install --no-interaction
 docker run --rm --network none -v "$PWD:/app" visibility-craft-tests:php83 php vendor/bin/phpunit --bootstrap tests/bootstrap.php tests
-python3 tests/docker-smoke.py
+CRAFT_TEST_PHP=8.2 python3 tests/docker-smoke.py
+CRAFT_TEST_PHP=8.3 python3 tests/docker-smoke.py
 ```
+
+GitHub Actions runs the checks on both PHP 8.2 and 8.3.
 
 The unit/integration suite runs against real Craft/Yii classes and the published
 SDK, using a fake HTTP client: **7 tests, 64 assertions**. It covers registration,
@@ -89,8 +94,10 @@ failure behavior. It also scans project config and logs for the fixture key and
 cleans up its database container/network. Composer needs network access during
 installation; the execution tests do not contact MailChannels.
 
-Browser UI review, a minimum-PHP-version run, authorized live sending, release
-operator assignment, and Plugin Store approval remain outstanding. No production
+Browser interaction checks on Chrome verified selection, invalid-setting errors,
+save/reload, and read-only settings without exposing the key. Screenshot capture
+was unavailable, so visual sign-off/store screenshots, authorized live sending,
+release operator assignment, and Plugin Store approval remain outstanding. No production
 compatibility or delivery guarantee is implied by these local tests.
 
 ## Release and support
