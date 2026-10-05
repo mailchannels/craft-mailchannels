@@ -1,0 +1,22 @@
+name: Validate
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  craft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build PHP test image
+        run: docker build -t visibility-craft-tests:php83 -f tests/Dockerfile .
+      - name: Install locked dependencies
+        run: docker run --rm --user "$(id -u):$(id -g)" -e COMPOSER_HOME=/tmp/composer -v "$PWD:/app" visibility-craft-tests:php83 composer --no-plugins install --no-interaction --no-progress
+      - name: Validate package
+        run: docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/app" visibility-craft-tests:php83 composer --no-plugins validate --strict
+      - name: Offline message and settings tests
+        run: docker run --rm --network none --user "$(id -u):$(id -g)" -v "$PWD:/app" visibility-craft-tests:php83 php vendor/bin/phpunit --bootstrap tests/bootstrap.php tests
+      - name: Installed Craft smoke test
+        run: python3 tests/docker-smoke.py

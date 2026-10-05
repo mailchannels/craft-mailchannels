@@ -1,0 +1,23 @@
+{
+  "name": "mailchannels/craft-fixture",
+  "require": {
+    "mailchannels/craft-mailchannels": "@dev",
+    "vlucas/phpdotenv": "^5.6"
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "/plugin",
+      "options": {
+        "symlink": true
+      }
+    }
+  ],
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true,
+      "php-http/discovery": false
+    }
+  }
+}

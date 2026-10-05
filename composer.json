@@ -1,0 +1,55 @@
+{
+  "name": "mailchannels/craft-mailchannels",
+  "description": "MailChannels Email API mailer adapter for Craft CMS.",
+  "type": "craft-plugin",
+  "license": "MIT",
+  "keywords": [
+    "craft",
+    "craftcms",
+    "mailchannels",
+    "email",
+    "mailer"
+  ],
+  "require": {
+    "php": "^8.2",
+    "craftcms/cms": "^5.11.4",
+    "mailchannels/mailchannels-php": "^2.2",
+    "guzzlehttp/guzzle": "^7.9",
+    "guzzlehttp/psr7": "^2.7",
+    "symfony/mailer": "^6.4 || ^7.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "MailChannels\\Craft\\": "src/"
+    }
+  },
+  "extra": {
+    "handle": "mailchannels",
+    "name": "MailChannels",
+    "class": "MailChannels\\Craft\\Plugin",
+    "developer": "MailChannels",
+    "developerUrl": "https://www.mailchannels.com",
+    "documentationUrl": "https://github.com/mailchannels/craft-mailchannels#readme",
+    "developerEmail": "dev@mailchannels.com"
+  },
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true,
+      "php-http/discovery": false
+    }
+  },
+  "scripts": {
+    "test": "phpunit --bootstrap tests/bootstrap.php tests"
+  },
+  "homepage": "https://github.com/mailchannels/craft-mailchannels",
+  "support": {
+    "issues": "https://github.com/mailchannels/craft-mailchannels/issues",
+    "source": "https://github.com/mailchannels/craft-mailchannels",
+    "docs": "https://github.com/mailchannels/craft-mailchannels#readme",
+    "email": "dev@mailchannels.com"
+  }
+}

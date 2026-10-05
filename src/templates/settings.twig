@@ -1,0 +1,11 @@
+{% import '_includes/forms.twig' as forms %}
+{{ forms.textField({
+    label: 'API key environment variable',
+    instructions: 'Enter the name of a server environment variable, such as MAILCHANNELS_API_KEY. Store the API key on the server; never paste it here. This transport sends real email.',
+    id: 'apiKeyEnv',
+    name: 'apiKeyEnv',
+    value: adapter.apiKeyEnv,
+    errors: adapter.getErrors('apiKeyEnv'),
+    required: true,
+    disabled: readOnly
+}) }}
