@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Install and exercise a real Craft app on an isolated Docker network; no email."""
+import argparse
 import json
 import os
 from pathlib import Path
@@ -9,6 +10,12 @@ import tempfile
 import time
 import uuid
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--review-port', type=int, help='Keep isolated fixture available on loopback for browser review; Ctrl-C cleans up')
+args = parser.parse_args()
+if args.review_port is not None and not 1024 <= args.review_port <= 65535:
+    parser.error('--review-port must be between 1024 and 65535')
+
 ROOT = Path(__file__).resolve().parents[1]
 PHP_VERSION = os.environ.get('CRAFT_TEST_PHP', '8.3')
 if PHP_VERSION not in ('8.2', '8.3'):
@@ -17,6 +24,7 @@ IMAGE = 'visibility-craft-tests:php' + PHP_VERSION.replace('.', '')
 SUFFIX = uuid.uuid4().hex[:10]
 NETWORK = 'visibility-craft-' + SUFFIX
 DB = NETWORK + '-db'
+WEB = NETWORK + '-web'
 
 
 def run(*args, **kwargs):
@@ -49,6 +57,8 @@ with tempfile.TemporaryDirectory(prefix='visibility-craft-') as directory:
                *mounts, IMAGE, 'php']
     network_created = False
     db_created = False
+    web_created = False
+    tunnel = None
     try:
         run('docker', 'build', '--build-arg', 'PHP_VERSION=' + PHP_VERSION,
             '-t', IMAGE, '-f', str(ROOT / 'tests/Dockerfile'), str(ROOT))
@@ -82,6 +92,22 @@ with tempfile.TemporaryDirectory(prefix='visibility-craft-') as directory:
         if output.count('PASS:') != 9 or 'No live API requests or email sent.' not in output:
             raise RuntimeError('Incomplete smoke checks: ' + output)
         print(output, end='')
+        if args.review_port:
+            from review_tunnel import open_tunnel
+            run('docker', 'run', '-d', '--name', WEB, '--network', NETWORK,
+                '-e', 'CRAFT_ALLOW_SUPERUSER=1', '-e', 'CRAFT_WEB_ROOT=/app/web',
+                *mounts, IMAGE, 'php', '-S', '127.0.0.1:8187', '-t', '/app/web')
+            web_created = True
+            tunnel = open_tunnel(WEB, args.review_port)
+            print(json.dumps({'review': f'http://127.0.0.1:{args.review_port}/admin/settings/email',
+                              'username': 'admin', 'password': 'fixture-only-admin-password',
+                              'fixture_directory': str(app), 'container': WEB,
+                              'provider_egress': False}), flush=True)
+            try:
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                pass
         checked = 0
         for folder in ['storage/logs', 'config/project']:
             for file in (app / folder).rglob('*'):
@@ -92,6 +118,11 @@ with tempfile.TemporaryDirectory(prefix='visibility-craft-') as directory:
         print(json.dumps({'files_checked_for_secret_leaks': checked, 'secret_matches': 0,
                           'craft': '5.11.4', 'php_series': PHP_VERSION, 'live_email_sent': False}))
     finally:
+        if tunnel:
+            tunnel.shutdown()
+            tunnel.server_close()
+        if web_created:
+            subprocess.run(['docker', 'rm', '-f', WEB], capture_output=True)
         if db_created:
             subprocess.run(['docker', 'rm', '-f', DB], capture_output=True)
         if network_created:
