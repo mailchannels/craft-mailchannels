@@ -95,10 +95,33 @@ cleans up its database container/network. Composer needs network access during
 installation; the execution tests do not contact MailChannels.
 
 Browser interaction checks on Chrome verified selection, invalid-setting errors,
-save/reload, and read-only settings without exposing the key. Screenshot capture
-was unavailable, so visual sign-off/store screenshots, authorized live sending,
-release operator assignment, and Plugin Store approval remain outstanding. No production
-compatibility or delivery guarantee is implied by these local tests.
+save/reload, and read-only settings without exposing the key. Desktop (1280px) and
+narrow (390px) screenshots were inspected, including validation errors, read-only
+settings and the installed plugin icon. The narrow form scrolls vertically without
+horizontal overflow. Chrome exposes the environment field's label and instructions
+in its accessibility tree; this is not a physical screen-reader acceptance test.
+Authorized live sending, company deployment/queue review, release operator
+assignment and Plugin Store approval remain outstanding.
+
+For repeatable local browser review, run:
+
+```sh
+python3 tests/docker-smoke.py --review-port 18187
+```
+
+After the nine smoke checks, this prints the local URL and synthetic admin login.
+The app remains on the internal Docker network; a loopback TCP tunnel uses
+`docker exec` to reach its PHP web server without publishing a container port or
+adding an external network. Keep the terminal open; Ctrl-C scans for fixture-key
+leaks and removes the web/database containers, network and temporary app. Do not
+expose the loopback port through a public proxy. An SSH loopback-only reverse tunnel
+can make it available to a browser on another trusted machine.
+
+The fixture is disposable. Its Test button is not a dry-run control; leave it alone
+during layout review. To inspect read-only settings, change `allowAdminChanges(true)`
+to `false` in the printed fixture directory's `config/general.php`, reload, then
+restore it. This changes only the temporary fixture. Use real screenshots from this
+installation for review; store publication still needs release-owner approval.
 
 ## Release and support
 
