@@ -9,6 +9,7 @@ import signal
 import subprocess
 import tempfile
 import time
+import urllib.request
 import uuid
 
 parser = argparse.ArgumentParser()
@@ -103,6 +104,14 @@ with tempfile.TemporaryDirectory(prefix='visibility-craft-') as directory:
                 *mounts, IMAGE, 'php', '-S', '127.0.0.1:8187', '-t', '/app/web')
             web_created = True
             tunnel = open_tunnel(WEB, args.review_port)
+            for attempt in range(30):
+                try:
+                    urllib.request.urlopen(f'http://127.0.0.1:{args.review_port}/admin/login', timeout=5).close()
+                    break
+                except OSError:
+                    time.sleep(1)
+            else:
+                raise RuntimeError('Review URL did not respond through the tunnel')
             print(json.dumps({'review': f'http://127.0.0.1:{args.review_port}/admin/settings/email',
                               'username': 'admin', 'password': 'fixture-only-admin-password',
                               'fixture_directory': str(app), 'container': WEB,
