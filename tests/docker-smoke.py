@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import signal
 import subprocess
 import tempfile
 import time
@@ -13,6 +14,9 @@ import uuid
 parser = argparse.ArgumentParser()
 parser.add_argument('--review-port', type=int, help='Keep isolated fixture available on loopback for browser review; Ctrl-C cleans up')
 args = parser.parse_args()
+# Route terminal close and kill through the KeyboardInterrupt cleanup path.
+for sig in (signal.SIGTERM, signal.SIGHUP):
+    signal.signal(sig, signal.default_int_handler)
 if args.review_port is not None and not 1024 <= args.review_port <= 65535:
     parser.error('--review-port must be between 1024 and 65535')
 
