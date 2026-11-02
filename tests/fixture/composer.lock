@@ -2339,8 +2339,7 @@
             "support": {
                 "issues": "https://github.com/mailchannels/craft-mailchannels/issues",
                 "source": "https://github.com/mailchannels/craft-mailchannels",
-                "docs": "https://github.com/mailchannels/craft-mailchannels#readme",
-                "email": "dev@mailchannels.com"
+                "docs": "https://github.com/mailchannels/craft-mailchannels#readme"
             },
             "transport-options": {
                 "symlink": true,
