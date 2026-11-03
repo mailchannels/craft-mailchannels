@@ -123,12 +123,15 @@ to `false` in the printed fixture directory's `config/general.php`, reload, then
 restore it. This changes only the temporary fixture. Use real screenshots from this
 installation for review; store publication still needs release-owner approval.
 
-## Release and support
+## Support
 
-This is an unreleased candidate. The confirmed support contact is
-**dev@mailchannels.com**. A release operator must be assigned before release.
-Please use this repository's issues for code review. For MailChannels account support, use
-[MailChannels Support](https://support.mailchannels.com/hc/en-us/requests/new).
+This project is supported by the MailChannels team on a best-effort basis. The best way to get support is to file an issue on GitHub: https://github.com/mailchannels/craft-mailchannels/issues
+
+If you are a MailChannels customer and have a problem with the operation of the MailChannels service, you can get support at https://support.mailchannels.com/
+
+## Release
+
+This is an unreleased candidate. A release operator must be assigned before release.
 
 Publishing requires a public GitHub repository connected to a company Craft
 Console organization, a reviewed icon/description, a release tag, public docs and
