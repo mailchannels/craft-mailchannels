@@ -1,6 +1,6 @@
 {
   "name": "mailchannels/craft-mailchannels",
-  "description": "MailChannels Email API mailer adapter for Craft CMS.",
+  "description": "Send Craft CMS email reliably through MailChannels: delivery tracking, bounce handling and domain authentication built in. Free to start.",
   "type": "craft-plugin",
   "license": "MIT",
   "keywords": [

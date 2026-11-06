@@ -1,5 +1,9 @@
 # Release Notes for MailChannels
 
+## Unreleased
+
+- Lead the README and Composer package description with sending Craft email through MailChannels.
+
 ## 1.0.0 - 2026-11-03
 
 - Clarify best-effort project support through GitHub issues and service support through MailChannels.

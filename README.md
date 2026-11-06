@@ -1,7 +1,19 @@
 # MailChannels for Craft CMS
 
-**Unreleased integration candidate.** Tested locally with Craft 5.11.4 and PHP
-8.2 and 8.3. It is not listed in the Craft Plugin Store and has not sent a live test email.
+Send Craft CMS email reliably through MailChannels: delivery tracking, bounce
+handling and domain authentication built in. Free to start.
+
+MailChannels sends your Craft site's email, such as password resets, account
+verification emails, and form and order notifications from plugins that use
+Craft's mailer, through the MailChannels Email API instead of sendmail or SMTP, so
+it reaches the inbox. Connect with an API key, verify your domain, and every
+message is tracked: you can see deliveries, bounces and complaints, and bounced
+addresses are suppressed automatically. MailChannels has delivered email for web
+hosting providers for twenty years. Start free with 100 emails a day, then pay one
+simple price per send.
+
+Version 1.0.0 is listed in the [Craft Plugin Store](https://plugins.craftcms.com/mailchannels).
+Tested locally with Craft 5.11.4 and PHP 8.2 and 8.3; it has not sent a live test email.
 
 Adds **MailChannels** to Settings → Email → Transport Type. Craft system emails
 and plugins that use Craft's mailer are sent through the MailChannels Email API.
