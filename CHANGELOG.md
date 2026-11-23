@@ -1,5 +1,9 @@
 # Release Notes for MailChannels
 
+## Unreleased
+
+- Send `User-Agent: mailchannels-craft/<plugin version>` ahead of the SDK's own token so MailChannels can attribute the plugin's Email API traffic.
+
 ## 1.0.0 - 2026-11-03
 
 - Clarify best-effort project support through GitHub issues and service support through MailChannels.

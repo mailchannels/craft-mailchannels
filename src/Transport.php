@@ -18,14 +18,14 @@ final class Transport extends AbstractTransport
 {
     private readonly MailChannelsApiTransport $inner;
 
-    public function __construct(#[\SensitiveParameter] string $key, ClientInterface $httpClient)
+    public function __construct(#[\SensitiveParameter] string $key, ClientInterface $httpClient, string $pluginVersion)
     {
         parent::__construct();
         $factory = new HttpFactory();
         $this->inner = new MailChannelsApiTransport(
             apiKey: $key,
             baseUrl: 'https://api.mailchannels.net/tx/v1',
-            httpClient: new ResponseGuard($httpClient),
+            httpClient: new ResponseGuard(new UserAgentClient($httpClient, $pluginVersion)),
             requestFactory: $factory,
             streamFactory: $factory,
         );

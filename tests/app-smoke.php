@@ -47,7 +47,7 @@ $client = new class implements ClientInterface {
     }
 };
 $mailer = Craft::createObject(App::mailerConfig($loaded));
-$mailer->setTransport(new Transport('fixture-secret-not-real', $client));
+$mailer->setTransport(new Transport('fixture-secret-not-real', $client, 'smoke'));
 $message = $mailer->compose()->setFrom('sender@example.com')->setTo('recipient@example.net')->setSubject('Fixture')->setTextBody('Fixture only');
 verify($mailer->send($message) === true, 'real Craft mailer reports accepted fixture as success');
 $client->fail = true;

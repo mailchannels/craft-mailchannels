@@ -79,7 +79,7 @@ final class IntegrationTest extends TestCase
         $client = new FixtureHttpClient(new Response(202, [], json_encode([
             'request_id' => 'request-fixture', 'results' => [['index' => 0, 'status' => 'sent', 'message_id' => 'fixture-message']]
         ])));
-        $transport = new Transport('fixture-secret', $client);
+        $transport = new Transport('fixture-secret', $client, '1.2.3');
         $message = $this->message()->getSymfonyEmail();
         $message->getHeaders()->addTextHeader('X-MailChannels-Send-Async', 'true');
         $message->getHeaders()->addTextHeader('X-Craft-Fixture', 'preserved');
@@ -90,6 +90,7 @@ final class IntegrationTest extends TestCase
         $request = $client->requests[0];
         self::assertSame('https://api.mailchannels.net/tx/v1/send', (string)$request->getUri());
         self::assertSame('fixture-secret', $request->getHeaderLine('X-Api-Key'));
+        self::assertSame('mailchannels-craft/1.2.3 ' . \MailChannels\Version::userAgent(), $request->getHeaderLine('User-Agent'));
         $body = json_decode((string)$request->getBody(), true);
         self::assertSame('to@example.net', $body['personalizations'][0]['to'][0]['email']);
         self::assertSame('cc@example.net', $body['personalizations'][0]['cc'][0]['email']);
@@ -107,7 +108,7 @@ final class IntegrationTest extends TestCase
     {
         $client = new FixtureHttpClient(new Response(202, [], '{"request_id":"fixture","results":[{"index":0,"status":"sent"}]}'));
         $message = $this->message();
-        (new Transport('fixture-key', $client))->send($message->getSymfonyEmail(), new Envelope(new Address('envelope@example.com'), [new Address('actual@example.net')]));
+        (new Transport('fixture-key', $client, '1.2.3'))->send($message->getSymfonyEmail(), new Envelope(new Address('envelope@example.com'), [new Address('actual@example.net')]));
         $body = json_decode((string)$client->requests[0]->getBody(), true);
         self::assertSame('actual@example.net', $body['personalizations'][0]['to'][0]['email']);
         self::assertSame('envelope@example.com', $body['envelope_from']['email']);
@@ -133,7 +134,7 @@ final class IntegrationTest extends TestCase
         foreach ($results as $result) {
             $client = new FixtureHttpClient($result);
             try {
-                (new Transport('fixture-secret', $client))->send($this->message()->getSymfonyEmail());
+                (new Transport('fixture-secret', $client, '1.2.3'))->send($this->message()->getSymfonyEmail());
                 self::fail('Must fail closed');
             } catch (TransportException $e) {
                 self::assertStringNotContainsString('fixture-secret', $e->getMessage());

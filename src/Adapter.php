@@ -55,8 +55,9 @@ final class Adapter extends BaseTransportAdapter
         if (!is_string($key) || trim($key) === '') {
             throw new \InvalidArgumentException('Set the configured MailChannels API key environment variable on this server.');
         }
+        // Craft reports the installed Composer package version, i.e. the release.
         return new Transport($key, new Client([
             'timeout' => 30, 'connect_timeout' => 10, 'allow_redirects' => false,
-        ]));
+        ]), Plugin::getInstance()?->getVersion() ?? 'dev');
     }
 }
